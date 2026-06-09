@@ -4,7 +4,7 @@ import sys
 
 # 設定 Discord Webhook 網址
 # 為了資訊安全，我們從環境變數讀取
-WEBHOOK_URL = "https://discord.com"
+WEBHOOK_URL = "https://discord.com/channels/1312332698307788830/1413493611487821864"
 
 # 喊話內容
 MESSAGE_CONTENT =
