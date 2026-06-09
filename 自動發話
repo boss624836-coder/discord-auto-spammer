@@ -1,0 +1,52 @@
+import time
+import requests
+import sys
+
+# 設定 Discord Webhook 網址
+# 為了資訊安全，我們從環境變數讀取
+WEBHOOK_URL = "https://discord.com"
+
+# 喊話內容
+MESSAGE_CONTENT =
+"❤️出力消火每小時7❄️❤️\n"
+"❤️出租祈禱每小時7❄️❤️\n"
+"❤️出租魔消每小時7❄️❤️\n"
+"❤️2小時以上一律五雪❤️\n"
+"❤️出租楓祝眼每小時18❄️❤️\n"
+"❤️出租急速機每小時18❄️❤️\n"
+
+"❤️服務200+老闆給的就是回饋❤️\n"
+"🛴現在有空人在私訊🛴\n"
+"‼️🗣️先加好友在私訊‼️‼️\n"
+
+# 設定單次任務執行時間為 5 小時 (18000 秒)，預防超過 GitHub 的 6 小時限制
+TOTAL_RUN_TIME = 18000 
+INTERVAL = 55  # 55 秒發話一次
+
+start_time = time.time()
+print("自動喊話機器人已啟動...")
+
+while time.time() - start_time < TOTAL_RUN_TIME:
+    payload = {
+        "content": MESSAGE_CONTENT
+    }
+    
+    try:
+        response = requests.post(WEBHOOK_URL, json=payload)
+        if response.status_code == 204:
+            print(f"[{time.strftime('%X')}] 訊息發送成功！")
+        elif response.status_code == 429:
+            # 如果觸發 Discord 的 Rate Limit 防洪機制，自動讀取並延遲重試
+            retry_after = response.json().get("retry_after", 5)
+            print(f"觸發 Discord 頻率限制，暫停 {retry_after} 秒後重試...")
+            time.sleep(retry_after)
+            continue
+        else:
+            print(f"發送失敗，狀態碼：{response.status_code}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+        
+    # 等待 55 秒
+    time.sleep(INTERVAL)
+
+print("已達到 5 小時單次任務上限，安全退出，等待下一次自動喚醒...")
